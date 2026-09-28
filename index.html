@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco-Sort</title>
+  <meta name="description" content="Point your camera at an item of trash and Eco-Sort tells you where it goes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+        </svg>
+      </span>
+      <h1>Eco-Sort</h1>
+    </div>
+    <p class="tagline">Scan an item. Sort it right.</p>
+  </header>
+
+  <main class="app">
+    <!-- Camera panel: Phase 2 pipes the webcam into #webcam -->
+    <section class="camera-card" aria-label="Camera preview">
+      <div class="camera-frame" id="cameraFrame" data-active="false">
+        <video id="webcam" autoplay playsinline muted></video>
+
+        <div class="camera-placeholder" id="cameraPlaceholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+            <circle cx="12" cy="13" r="3" />
+          </svg>
+          <p id="cameraStatus">Camera is off</p>
+          <span id="cameraHint">Press <strong>Start camera</strong> to begin scanning</span>
+        </div>
+
+        <!-- Corner brackets that frame the scan area -->
+        <span class="corner tl" aria-hidden="true"></span>
+        <span class="corner tr" aria-hidden="true"></span>
+        <span class="corner bl" aria-hidden="true"></span>
+        <span class="corner br" aria-hidden="true"></span>
+      </div>
+
+      <button class="btn" id="toggleCamera" type="button" aria-pressed="false">
+        <span class="btn-dot" aria-hidden="true"></span>
+        <span class="btn-label">Start camera</span>
+      </button>
+    </section>
+
+    <!-- Result panel: Phase 3 sets data-state to recycling | compost | landfill -->
+    <section class="result-card" id="resultCard" data-state="idle" aria-live="polite">
+      <p class="result-eyebrow">Prediction</p>
+      <p class="result-label" id="resultLabel">Waiting…</p>
+      <div class="confidence">
+        <div class="confidence-bar"><div class="confidence-fill" id="confidenceFill"></div></div>
+        <span class="confidence-text" id="confidenceText">—</span>
+      </div>
+      <p class="result-hint" id="resultHint">Loading model…</p>
+
+      <ul class="legend" aria-label="Categories">
+        <li class="legend-item recycling"><span></span>Recycling <b class="legend-pct" data-class="recycling"></b></li>
+        <li class="legend-item compost"><span></span>Compost <b class="legend-pct" data-class="compost"></b></li>
+        <li class="legend-item landfill"><span></span>Landfill <b class="legend-pct" data-class="landfill"></b></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Runs entirely in your browser. No images leave your device.</p>
+  </footer>
+
+  <!-- Teachable Machine exports target TF.js 1.x; 1.7.4 matches the version this model was trained with -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.7.4/dist/tf.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="classifier.js" defer></script>
+</body>
+</html>

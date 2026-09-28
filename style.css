@@ -1,0 +1,364 @@
+/* ============ Design tokens ============ */
+:root {
+  --bg: #f4f1ea;            /* warm off-white, like recycled paper */
+  --surface: #ffffff;
+  --surface-muted: #ebe6dc;
+  --text: #1f2a1f;
+  --text-muted: #5f6b5c;
+  --border: #ddd6c8;
+
+  --leaf: #2f7d4f;          /* primary green */
+  --leaf-dark: #22603b;
+  --leaf-soft: #e1efe5;
+
+  /* Category colours (used by Phase 3) */
+  --recycling: #2b6cb0;     /* blue bin */
+  --recycling-soft: #e3edf8;
+  --compost: #6b8e23;       /* olive / organic */
+  --compost-soft: #edf2dc;
+  --landfill: #6d5d4b;      /* earthy brown-grey */
+  --landfill-soft: #eee8e0;
+
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --shadow: 0 1px 2px rgba(31, 42, 31, 0.06), 0 8px 24px rgba(31, 42, 31, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141a15;
+    --surface: #1d241e;
+    --surface-muted: #262e27;
+    --text: #e8ede6;
+    --text-muted: #9aa696;
+    --border: #2f3830;
+    --leaf: #5bb67f;
+    --leaf-dark: #489a68;
+    --leaf-soft: #1f3326;
+    --recycling: #63a4e8;
+    --recycling-soft: #1b2a3a;
+    --compost: #a3c24a;
+    --compost-soft: #28301a;
+    --landfill: #b8a58f;
+    --landfill-soft: #2e2a24;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* ============ Base ============ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ Header ============ */
+.site-header {
+  padding: 28px 16px 8px;
+  text-align: center;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--leaf-soft);
+  color: var(--leaf);
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ============ Layout ============ */
+.app {
+  flex: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 20px 16px 32px;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 860px) {
+  .app {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+    padding-top: 32px;
+  }
+}
+
+/* ============ Camera card ============ */
+.camera-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.camera-frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-muted);
+}
+
+.camera-frame video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Mirror only the front (selfie) camera; a rear camera should read true-to-life */
+.camera-frame[data-facing="user"] video { transform: scaleX(-1); }
+
+.camera-frame[data-active="true"] video { opacity: 1; }
+
+.camera-frame[data-error="true"] .camera-placeholder { color: #c0392b; }
+.camera-frame[data-error="true"] .corner { border-color: #c0392b; }
+.camera-frame[data-active="true"] .camera-placeholder { opacity: 0; pointer-events: none; }
+
+.camera-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  padding: 16px;
+  color: var(--text-muted);
+  transition: opacity 0.3s ease;
+}
+
+.camera-placeholder p {
+  margin: 8px 0 0;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.camera-placeholder span { font-size: 0.9rem; }
+
+/* Scan-area corner brackets */
+.corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--leaf);
+  opacity: 0.7;
+}
+.corner.tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+.corner.tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+.corner.bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+.corner.br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+
+/* ============ Button ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--leaf);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn:hover { background: var(--leaf-dark); }
+.btn:active { transform: scale(0.98); }
+.btn:focus-visible { outline: 3px solid var(--leaf-soft); outline-offset: 3px; }
+.btn:disabled { opacity: 0.6; cursor: progress; }
+
+.btn-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* "Stop" state, toggled in Phase 2 via aria-pressed */
+.btn[aria-pressed="true"] {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+.btn[aria-pressed="true"] .btn-dot {
+  background: #c0392b;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ============ Result card ============ */
+.result-card {
+  --accent: var(--leaf);
+  --accent-soft: var(--leaf-soft);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 6px solid var(--accent);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.result-card[data-state="idle"]      { --accent: var(--border); }
+.result-card[data-state="recycling"] { --accent: var(--recycling); --accent-soft: var(--recycling-soft); background: var(--accent-soft); }
+.result-card[data-state="compost"]   { --accent: var(--compost);   --accent-soft: var(--compost-soft);   background: var(--accent-soft); }
+.result-card[data-state="landfill"]  { --accent: var(--landfill);  --accent-soft: var(--landfill-soft);  background: var(--accent-soft); }
+
+.result-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.result-label {
+  margin: 4px 0 20px;
+  font-size: clamp(2.5rem, 9vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+/* idle = no camera, uncertain = camera on but no confident answer */
+.result-card[data-state="uncertain"] { --accent: var(--text-muted); }
+.result-card[data-state="idle"] .result-label,
+.result-card[data-state="uncertain"] .result-label { color: var(--text-muted); }
+
+.result-hint {
+  margin: 12px 0 0;
+  min-height: 1.5em;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.confidence {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.confidence-bar {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  overflow: hidden;
+}
+
+.confidence-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.confidence-text {
+  min-width: 3.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Legend */
+.legend {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-item span {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+.legend-item.recycling span { background: var(--recycling); }
+.legend-item.compost span   { background: var(--compost); }
+.legend-item.landfill span  { background: var(--landfill); }
+
+.legend-pct {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.legend-pct:empty { display: none; }
+
+/* ============ Footer ============ */
+.site-footer {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.site-footer p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
